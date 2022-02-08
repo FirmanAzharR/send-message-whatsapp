@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon index.js",
     "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "dependencies": {
-    "express": "^4.17.2"
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15",
+    "qrcode-terminal": "^0.12.0",
+    "wbm": "^1.1.16",
+    "whatsapp-web.js": "^1.15.5"
   }
 }
