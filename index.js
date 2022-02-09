@@ -61,7 +61,10 @@ app.post("/whatsapp/send", async (req, res) => {
       // Sending message.
       await client
         .sendMessage(chatId, text)
-        .then(() => res.send("success-send-message"))
+        .then(() => {
+          console.log("success send verification to whatsapp-number");
+          res.send("success-send-message");
+        })
         .catch((e) => res.send(e));
     });
 
