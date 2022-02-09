@@ -2,7 +2,6 @@ const express = require("express");
 const { Client } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const bodyParser = require("body-parser");
-const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const app = express();
@@ -42,9 +41,6 @@ app.post("/whatsapp/send", (req, res) => {
     });
 
     client.on("ready", async () => {
-      const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
       const text = "Your OTP 749381";
       // we have to delete "+" from the beginning and add "@c.us" at the end of the number.
       const chatId = number.substring(1) + "@c.us";
