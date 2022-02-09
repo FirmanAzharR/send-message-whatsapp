@@ -16,11 +16,14 @@ app.get("/", (_req, res) => {
 app.post("/whatsapp/send", async (req, res) => {
   try {
     const number = req.body.number;
-
-    await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    await puppeteer
+      .launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      })
+      .then(() => {
+        console.log("pupeter launch");
+      });
 
     const SESSION_FILE_PATH = "./session.json";
     let sessionData;
@@ -31,6 +34,10 @@ app.post("/whatsapp/send", async (req, res) => {
 
     const client = new Client({
       session: sessionData,
+      puppeteer: {
+        headless: true,
+        args: ["--no-sandbox"],
+      },
     });
 
     client.on("qr", (qr) => {
