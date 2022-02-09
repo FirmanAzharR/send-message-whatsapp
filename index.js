@@ -2,6 +2,7 @@ const express = require("express");
 const { Client } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const bodyParser = require("body-parser");
+const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const app = express();
@@ -12,9 +13,15 @@ app.get("/", (_req, res) => {
   res.status(200).send("Hello server is running").end();
 });
 
-app.post("/whatsapp/send", (req, res) => {
+app.post("/whatsapp/send", async (req, res) => {
   try {
     const number = req.body.number;
+
+    await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
     const SESSION_FILE_PATH = "./session.json";
     let sessionData;
 
