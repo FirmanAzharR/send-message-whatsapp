@@ -2,7 +2,6 @@ const express = require("express");
 const { Client } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const bodyParser = require("body-parser");
-const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const app = express();
@@ -16,14 +15,6 @@ app.get("/", (_req, res) => {
 app.post("/whatsapp/send", async (req, res) => {
   try {
     const number = req.body.number;
-    await puppeteer
-      .launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      })
-      .then(() => {
-        console.log("pupeter launch");
-      });
 
     const SESSION_FILE_PATH = "./session.json";
     let sessionData;
@@ -36,7 +27,16 @@ app.post("/whatsapp/send", async (req, res) => {
       session: sessionData,
       puppeteer: {
         headless: true,
-        args: ["--no-sandbox"],
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--single-process",
+          "--disable-gpu",
+        ],
       },
     });
 
@@ -54,6 +54,10 @@ app.post("/whatsapp/send", async (req, res) => {
       });
     });
 
+    client.on("auth_failure", (_session) => {
+      console.log("auth failed");
+    });
+
     client.on("ready", async () => {
       const text = "Your OTP 749381";
       // we have to delete "+" from the beginning and add "@c.us" at the end of the number.
@@ -68,9 +72,13 @@ app.post("/whatsapp/send", async (req, res) => {
         .catch((e) => res.send(e));
     });
 
+    client.on("disconnected", (x) => {
+      console.log("client disconnected");
+      client.destroy();
+    });
+
     client.initialize();
   } catch (e) {
-    //fs.unlink("./session.json");
     console.log(e);
   }
 });
